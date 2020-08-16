@@ -12,6 +12,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.net.UnknownHostException;
 
@@ -29,7 +30,11 @@ public class RedisConfiguration {
             throws UnknownHostException {
         RedisTemplate<Object, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory);
-        template.setDefaultSerializer(jackson2JsonRedisSerializer());
+//        template.setDefaultSerializer(jackson2JsonRedisSerializer());
+//        starter中已经有配好了的，不必自己再进行配置
+        template.setDefaultSerializer(RedisSerializer.json());
+        template.setKeySerializer(RedisSerializer.string());
+        template.setHashKeySerializer(RedisSerializer.string());
         return template;
     }
 
@@ -37,7 +42,7 @@ public class RedisConfiguration {
      * json序列化
      * @return
      */
-    @Bean
+//    @Bean
     @SuppressWarnings("unchecked")
     public RedisSerializer<Object> jackson2JsonRedisSerializer(){
         Jackson2JsonRedisSerializer serializer = new Jackson2JsonRedisSerializer(Object.class);
