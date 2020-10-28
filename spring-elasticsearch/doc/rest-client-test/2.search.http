@@ -1,0 +1,13 @@
+GET http://localhost:9200/bank/_search
+{
+  "query": { "match_all": {} },
+  "sort": [
+    { "account_number": "asc" }
+  ]
+}
+
+<> 2020-08-23T025941.200.json
+
+<> 2020-08-23T030039.200.json
+
+###

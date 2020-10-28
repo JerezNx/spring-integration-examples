@@ -1,0 +1,22 @@
+GET http://localhost:9200/bank/_search
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+{
+  "query": {
+    "bool": {
+      "must": [
+        { "match": { "age": "40" } }
+      ],
+      "should": [
+        { "match": { "gender": "F" } }
+      ],
+      "must_not": [
+        { "match": { "state": "ID" } }
+      ]
+    }
+  }
+}
+
+###

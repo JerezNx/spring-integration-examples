@@ -1,0 +1,11 @@
+GET http://localhost:9200/bank/_search
+{
+  "query": { "match_all": {} },
+  "sort": [
+    { "account_number": "asc" }
+  ],
+  "from": 10,
+  "size": 10
+}
+
+###

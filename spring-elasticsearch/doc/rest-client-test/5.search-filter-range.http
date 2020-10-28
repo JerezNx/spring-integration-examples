@@ -1,0 +1,22 @@
+GET http://localhost:9200/bank/_search
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+{
+  "query": {
+    "bool": {
+      "must": { "match_all": {} },
+      "filter": {
+        "range": {
+          "balance": {
+            "gte": 20000,
+            "lte": 30000
+          }
+        }
+      }
+    }
+  }
+}
+
+###
