@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>websocket test</title>
+    <style>
+        #console {font-family: Consolas;font-size:13px;background: #000;color:limegreen;width:800px; height:600px;overflow: auto;}
+    </style>
+</head>
+<body>
+
+    <div id="console"></div>
+    <div>
+        <input id="send" type="text">
+        <button onclick="send()">send</button>
+    </div>
+
+    <script>
+        // gateway
+        var webSocketUrl = "ws://localhost:8888/test/lql";
+        // 直接访问
+        // var webSocketUrl = "ws://localhost:8085/test/lql";
+        connect();
+
+        function connect() {
+            window.websocket = new WebSocket(webSocketUrl);
+            websocket.onopen = function(e) {
+                //给服务器端发消息
+               websocket.send(JSON.stringify(getTestRequest()));
+            };
+
+            websocket.onmessage = function(event) {
+                // 接收服务端的消息
+                var data = event.data;
+                console.log(data);
+                append(data);
+            };
+
+            websocket.onclose = function (ev) {
+                append("【connection closed】 code=:"+ev.code+";  reason="+ev.reason+";   wasclean="+ev.wasClean);
+                // window.clearInterval(timer);
+            }
+        }
+
+        function append(messge) {
+            var console = document.getElementById("console");
+            console.innerHTML += messge +" <br/>----------------------------------<br/><br/>";
+            console.scrollTop = console.scrollHeight;
+        }
+
+        function send() {
+            websocket.send(document.getElementById("send").value);
+        }
+
+        function getTestRequest() {
+            return {"code":"0"};
+        }
+
+        function getParam(name) {
+            var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);//search,查询？后面的参数，并匹配正则
+            if(r!=null)return  unescape(r[2]); return null;
+        }
+
+        /**
+         * @param channel 推送通道类型
+         * @param keys 待推送id列表
+         * @constructor
+         */
+        function WebsocketRequest(channel, ids) {
+            this.channel = channel;
+            this.ids = ids;
+        }
+    </script>
+</body>
+</html>
