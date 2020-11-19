@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.4.0</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>xyz.jerez.spring</groupId>
+    <artifactId>spring-assembly</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>spring-assembly</name>
+    <description>Demo project for Spring Boot</description>
+
+    <properties>
+        <java.version>1.8</java.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <!--    依赖分离打包    -->
+        <profile>
+            <id>separate</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <assembly.config>package-separate.xml</assembly.config>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <configuration>
+                            <!-- 将静态资源排除出jar包 -->
+                            <excludes>
+                                <exclude>static/**</exclude>
+                                <exclude>templates/**</exclude>
+                                <exclude>*.*</exclude>
+                            </excludes>
+                            <archive>
+                                <manifest>
+                                    <addClasspath>true</addClasspath>
+                                    <!-- MANIFEST.MF 中 Class-Path 加入前缀 -->
+                                    <!--                            <classpathPrefix>lib/</classpathPrefix>-->
+                                    <!-- 写最终其他依赖的Lib相对于jar的位置 -->
+                                    <classpathPrefix>./</classpathPrefix>
+                                    <!-- jar包不包含唯一版本标识 -->
+                                    <useUniqueVersions>false</useUniqueVersions>
+                                    <!-- 指定启动类的包路径 -->
+                                    <mainClass>xyz.jerez.spring.assembly.SpringAssemblyApplication</mainClass>
+                                </manifest>
+                                <manifestEntries>
+                                    <!--MANIFEST.MF 中 Class-Path 加入资源文件目录 -->
+                                    <!--写最终配置文件相对于jar的位置 -->
+                                    <Class-Path>../config/</Class-Path>
+                                </manifestEntries>
+                            </archive>
+                            <!-- 指定打出的jar包路径 -->
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <configuration>
+                            <!--   打包后文件夹名称-->
+                            <finalName>app</finalName>
+                            <!--  名称后是否追加assembly 的 id-->
+                            <appendAssemblyId>true</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>src/main/assembly/${assembly.config}</descriptor>
+                            </descriptors>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>make-assembly</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!--    单独文件打包    -->
+        <profile>
+            <id>single</id>
+            <properties>
+                <assembly.config>package-single.xml</assembly.config>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>xyz.jerez.spring.assembly.SpringAssemblyApplication</mainClass>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <configuration>
+                            <!--   打包后文件夹名称-->
+                            <finalName>app</finalName>
+                            <!--  名称后是否追加assembly 的 id-->
+                            <appendAssemblyId>true</appendAssemblyId>
+                            <descriptors>
+                                <!--                        <descriptor>src/main/assembly/package-single.xml</descriptor>-->
+                                <descriptor>src/main/assembly/${assembly.config}</descriptor>
+                            </descriptors>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>make-assembly</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <build>
+        <finalName>app</finalName>
+        <plugins>
+            <!--    todo 本来想把assembly插件写这里公用，
+                     但当拆分打包时，会先执行 assembly 插件，再执行 spring-boot-maven-plugin
+                     这两个插件都是package阶段的，mavne不支持定义插件执行顺序，maven默认是按pom中的定义顺序
+                     但profile和外面的好像不是一个维度排序的，所以只能在上面写了两遍
+                     暂时没找到好的解决方案
+                   -->
+        </plugins>
+    </build>
+
+</project>
