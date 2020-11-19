@@ -16,6 +16,7 @@
 
     <properties>
         <java.version>1.8</java.version>
+        <main.class>xyz.jerez.spring.assembly.SpringAssemblyApplication</main.class>
     </properties>
 
     <dependencies>
@@ -68,7 +69,7 @@
                                     <!-- jar包不包含唯一版本标识 -->
                                     <useUniqueVersions>false</useUniqueVersions>
                                     <!-- 指定启动类的包路径 -->
-                                    <mainClass>xyz.jerez.spring.assembly.SpringAssemblyApplication</mainClass>
+                                    <mainClass>${main.class}</mainClass>
                                 </manifest>
                                 <manifestEntries>
                                     <!--MANIFEST.MF 中 Class-Path 加入资源文件目录 -->
@@ -117,7 +118,7 @@
                         <groupId>org.springframework.boot</groupId>
                         <artifactId>spring-boot-maven-plugin</artifactId>
                         <configuration>
-                            <mainClass>xyz.jerez.spring.assembly.SpringAssemblyApplication</mainClass>
+                            <mainClass>${main.class}</mainClass>
                         </configuration>
                     </plugin>
                     <plugin>
