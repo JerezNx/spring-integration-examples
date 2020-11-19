@@ -10,9 +10,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import xyz.jereznx.spring.springredis.mq.RedisMqClient;
 
 import java.net.UnknownHostException;
 
@@ -26,13 +28,14 @@ import java.net.UnknownHostException;
 public class RedisConfiguration {
 
     @Bean
-    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory)
+    public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory redisConnectionFactory)
             throws UnknownHostException {
-        RedisTemplate<Object, Object> template = new RedisTemplate<>();
+        RedisTemplate<String, String> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory);
 //        template.setDefaultSerializer(jackson2JsonRedisSerializer());
 //        starter中已经有配好了的，不必自己再进行配置
-        template.setDefaultSerializer(RedisSerializer.json());
+        template.setDefaultSerializer(RedisSerializer.string());
+//        template.setDefaultSerializer(RedisSerializer.json());
         template.setKeySerializer(RedisSerializer.string());
         template.setHashKeySerializer(RedisSerializer.string());
         return template;
@@ -54,6 +57,18 @@ public class RedisConfiguration {
         mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
         serializer.setObjectMapper(mapper);
         return serializer;
+    }
+
+    @Bean
+    public RedisMqClient redisMqClient(RedisConnectionFactory redisConnectionFactory) throws UnknownHostException {
+        return new RedisMqClient(redisTemplate(redisConnectionFactory));
+    }
+
+    @Bean
+    public RedisMessageListenerContainer redisMessageListenerContainer(RedisMqClient redisMqClient) throws UnknownHostException {
+        return redisMqClient.subscribe("test", (message, topic) -> {
+            System.out.println("收到消息：" + message+ ":" + topic);
+        });
     }
 
 }
