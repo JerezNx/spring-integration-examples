@@ -1,0 +1,5 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: ["*"] #开启全部端点相关代码
