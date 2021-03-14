@@ -26,13 +26,13 @@ public class ListenerTests {
     @Autowired
     private Scheduler scheduler;
 
-    void addListener() throws SchedulerException {
+    void addJobListener() throws SchedulerException {
         scheduler.getListenerManager().addJobListener(new MyJobListener(), GroupMatcher.groupEquals(JOB_GROUP_NAME));
     }
 
     @Test
     void test() throws SchedulerException, InterruptedException {
-        addListener();
+        addJobListener();
         doJob();
         TimeUnit.SECONDS.sleep(10);
     }

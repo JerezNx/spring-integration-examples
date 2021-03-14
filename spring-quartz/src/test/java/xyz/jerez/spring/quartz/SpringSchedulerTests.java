@@ -27,7 +27,7 @@ public class SpringSchedulerTests {
     private String TRIGGER_GROUP_NAME = "triggerGroup1";
 
     @Test
-    void test() throws SchedulerException, InterruptedException {
+    void startJob() throws SchedulerException, InterruptedException {
         JobDetail jobDetail = JobBuilder.newJob(AutowireBeanJob.class)
                 .withIdentity(JOB_NAME, JOB_GROUP).build();
         // 3、构建Trigger实例,每隔1s执行一次
@@ -35,16 +35,23 @@ public class SpringSchedulerTests {
                 //立即生效
                 .startNow()
                 .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                        .withIntervalInSeconds(1)
+                        .withIntervalInSeconds(5)
                         .repeatForever())
                 .build();
         //4、执行
-        scheduler.scheduleJob(jobDetail, trigger);
+        try {
+            scheduler.scheduleJob(jobDetail, trigger);
+        } catch (SchedulerException e) {
+            e.printStackTrace();
+        }
 //        spring.quartz.auto-startup默认为true，即自动启动
 //        scheduler.start();
         TimeUnit.SECONDS.sleep(1);
 //        spring托管生命周期，无需自己关闭
 //        scheduler.shutdown();
+        while (true) {
+
+        }
     }
 
     /**

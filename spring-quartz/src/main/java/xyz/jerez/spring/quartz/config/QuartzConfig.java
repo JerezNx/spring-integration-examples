@@ -4,11 +4,12 @@ import org.springframework.boot.autoconfigure.quartz.QuartzDataSource;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
 
 /**
+ * 自动装配参见 {@link org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration}
+ *
  * @author liqilin
  * @since 2020/11/10 14:44
  */

@@ -20,8 +20,6 @@ public class AutowireDataJob implements Job {
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        log.info("jobName:{}", jobName);
-        log.info("jobAge:{}", jobAge);
-        log.info("triggerName:{}", triggerName);
+        log.info("jobName:{},jobAge:{},triggerName:{}", jobName, jobAge, triggerName);
     }
 }

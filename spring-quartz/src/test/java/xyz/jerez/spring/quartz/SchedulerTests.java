@@ -10,6 +10,8 @@ import xyz.jerez.spring.quartz.job.PrintWordsJob;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 不依赖spring的方式，使用quartz
+ *
  * @author liqilin
  * @since 2020/11/10 11:21
  */
@@ -46,16 +48,16 @@ public class SchedulerTests {
         Scheduler scheduler = schedulerFactory.getScheduler();
         // 2、创建JobDetail实例，并与PrintWordsJob类绑定(Job执行内容)
         JobDataMap jobDataMap = new JobDataMap();
-        jobDataMap.put("name","lql");
+        jobDataMap.put("name", "lql");
         JobDetail jobDetail = JobBuilder.newJob(PrintDataJob.class)
                 .withIdentity("job1", "group1")
                 .usingJobData(jobDataMap)
-                .usingJobData("age",24)
+                .usingJobData("age", 24)
                 .build();
         // 3、构建Trigger实例,每隔1s执行一次
         Trigger trigger = TriggerBuilder.newTrigger()
                 .withIdentity("trigger1", "triggerGroup1")
-                .usingJobData("name","test")
+                .usingJobData("name", "test")
                 .startNow()//立即生效
                 .withSchedule(SimpleScheduleBuilder.simpleSchedule()
                         .withIntervalInSeconds(1)//每隔1s执行一次
@@ -78,16 +80,16 @@ public class SchedulerTests {
         Scheduler scheduler = schedulerFactory.getScheduler();
         // 2、创建JobDetail实例，并与PrintWordsJob类绑定(Job执行内容)
         JobDataMap jobDataMap = new JobDataMap();
-        jobDataMap.put("jobName","lql");
+        jobDataMap.put("jobName", "lql");
         JobDetail jobDetail = JobBuilder.newJob(AutowireDataJob.class)
                 .withIdentity("job1", "group1")
                 .usingJobData(jobDataMap)
-                .usingJobData("jobAge",24)
+                .usingJobData("jobAge", 24)
                 .build();
         // 3、构建Trigger实例,每隔1s执行一次
         Trigger trigger = TriggerBuilder.newTrigger()
                 .withIdentity("trigger1", "triggerGroup1")
-                .usingJobData("triggerName","test")
+                .usingJobData("triggerName", "test")
                 .startNow()
 //                每隔5秒
                 .withSchedule(CronScheduleBuilder.cronSchedule("00/5 * * ? * * *")).build();
