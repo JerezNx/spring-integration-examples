@@ -1,4 +1,4 @@
-package xyz.jereznx.spring.springredis.mq;
+package xyz.jereznx.spring.redis.mq;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;
@@ -7,13 +7,22 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 
+import java.util.Objects;
+
+/**
+ * @author Jerez
+ */
 @Slf4j
 public class RedisMqClient {
 
-    private RedisTemplate<String, String> redisTemplate;
+    private static RedisTemplate<String, String> redisTemplate;
 
-    public RedisMqClient( RedisTemplate<String, String> redisTemplate) {
-        this.redisTemplate = redisTemplate;
+    private static boolean inited;
+
+    public RedisMqClient() {
+        if (!inited) {
+            throw new IllegalArgumentException("call method init once before use");
+        }
     }
 
     /**
@@ -22,7 +31,7 @@ public class RedisMqClient {
     public RedisMessageListenerContainer subscribe(String topic, MessageHandler handler) {
         MessageAdapter messageAdapter = new MessageAdapter(handler);
         RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
-        redisMessageListenerContainer.setConnectionFactory(redisTemplate.getConnectionFactory());
+        redisMessageListenerContainer.setConnectionFactory(Objects.requireNonNull(redisTemplate.getConnectionFactory()));
         redisMessageListenerContainer.addMessageListener(messageAdapter, new PatternTopic(topic));
         return redisMessageListenerContainer;
     }
@@ -31,9 +40,19 @@ public class RedisMqClient {
         redisTemplate.convertAndSend(topic, message);
     }
 
-    private class MessageAdapter implements MessageListener {
+    /**
+     * 全局需且必需在使用该类前调用1次
+     */
+    public static void init(RedisTemplate<String, String> redisTemplate) {
+        RedisMqClient.redisTemplate = redisTemplate;
+        inited = true;
+    }
+
+    private static class MessageAdapter implements MessageListener {
+
         private MessageHandler handler;
-        public MessageAdapter(MessageHandler handler) {
+
+        MessageAdapter(MessageHandler handler) {
             this.handler = handler;
         }
 

@@ -1,5 +1,8 @@
-package xyz.jereznx.spring.springredis.mq;
+package xyz.jereznx.spring.redis.mq;
 
+/**
+ * @author Jerez
+ */
 public interface MessageHandler {
 
     /**
