@@ -1,13 +1,13 @@
-package xyz.jerez.spring.security;
+package xyz.jerez.spring.jpa;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SpringSecurityApplication {
+public class SpringJpaApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SpringSecurityApplication.class, args);
+        SpringApplication.run(SpringJpaApplication.class, args);
     }
 
 }

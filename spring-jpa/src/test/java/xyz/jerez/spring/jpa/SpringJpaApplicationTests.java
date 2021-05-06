@@ -1,10 +1,10 @@
-package xyz.jerez.spring.security;
+package xyz.jerez.spring.jpa;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SpringSecurityApplicationTests {
+class SpringJpaApplicationTests {
 
     @Test
     void contextLoads() {
